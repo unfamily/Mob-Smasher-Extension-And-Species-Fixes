@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "package": "net.unfamily.species_fix.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "species_fix.refmap.json",
+    "mixins": [
+        "QuakeMixin",
+        "PlayerAttackQuakeRedirectMixin"
+    ],
+    "client": [
+        "ScreenShakeEventMixin"
+    ],
+    "minVersion": "0.8"
+}
