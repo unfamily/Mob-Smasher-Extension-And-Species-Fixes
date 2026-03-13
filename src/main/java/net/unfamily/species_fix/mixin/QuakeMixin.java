@@ -32,8 +32,8 @@ public class QuakeMixin {
     private void species_fix$bypassImmunityOrDieIfLethal(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
         Quake quake = (Quake) (Object) this;
 
-        // Saw (Mob Grinding Utils): kill instantly, no shield/absorb
-        if (isMobSmasherDamage(damageSource)) {
+        // Saw (Mob Grinding Utils): kill instantly, no shield/absorb (when config enabled)
+        if (net.unfamily.species_fix.Config.quakeSawKillEnabled && isMobSmasherDamage(damageSource)) {
             quake.setHealth(0);
             quake.die(damageSource);
             LOGGER.info("[Species Fix] Saw damage killed Quake (QuakeMixin.hurt)");

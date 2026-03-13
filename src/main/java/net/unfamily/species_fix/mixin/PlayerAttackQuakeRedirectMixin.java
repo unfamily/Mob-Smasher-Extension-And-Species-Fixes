@@ -43,7 +43,7 @@ public class PlayerAttackQuakeRedirectMixin {
     private void species_fix$onAttackEntity(Entity target, CallbackInfo ci) {
         if (!(target instanceof LivingEntity living)) return;
         Player self = (Player) (Object) this;
-        if (!isFakePlayer(self) || !isQuake(living)) return;
+        if (!net.unfamily.species_fix.Config.quakeSawKillEnabled || !isFakePlayer(self) || !isQuake(living)) return;
 
         // Saw/FakePlayer attacking Quake: kill directly so Quake's hurt() is never invoked
         DamageSource source = living.damageSources().mobAttack(self);

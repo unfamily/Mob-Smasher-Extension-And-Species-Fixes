@@ -28,6 +28,7 @@ public class SawQuakeKillHandler {
         Entity target = event.getTarget();
         if (!(target instanceof LivingEntity living)) return;
 
+        if (!Config.quakeSawKillEnabled) return;
         if (!isFakePlayer(player)) return;
         if (!isQuake(target)) return;
 
