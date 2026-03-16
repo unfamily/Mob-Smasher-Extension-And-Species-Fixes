@@ -1,4 +1,4 @@
-# MonSmaher Extension And Species Fixes
+# MonSmasher Extension And Species Fixes
 
 | Version | Support Status |
 |--------|---------------|
