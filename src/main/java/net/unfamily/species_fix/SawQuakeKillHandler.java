@@ -2,7 +2,6 @@ package net.unfamily.species_fix;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,14 +12,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.slf4j.Logger;
 
 /**
- * When a FakePlayer (e.g. MGU Saw) attacks a Quake, kill the Quake and cancel the attack.
+ * When a FakePlayer (e.g. MGU Saw) attacks certain \"hard\" mobs, kill them and cancel the attack.
+ * The list of entity IDs (modid:entity) is configured via species_fix-common.toml.
  * This runs on AttackEntityEvent so we don't depend on Player.attack() mixin (which may not
  * apply in production due to obfuscation).
  */
 public class SawQuakeKillHandler {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final ResourceLocation QUAKE_ID = new ResourceLocation("species", "quake");
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onAttackEntity(AttackEntityEvent event) {
@@ -28,16 +27,16 @@ public class SawQuakeKillHandler {
         Entity target = event.getTarget();
         if (!(target instanceof LivingEntity living)) return;
 
-        if (!Config.quakeSawKillEnabled) return;
         if (!isFakePlayer(player)) return;
-        if (!isQuake(target)) return;
+        if (!isSawKillTarget(target)) return;
 
-        // Kill Quake and cancel so normal attack (and Quake.hurt()) never runs
+        // Kill target and cancel so normal attack (and entity.hurt()) never runs
         DamageSource source = living.damageSources().mobAttack(player);
         living.setHealth(0);
         living.die(source);
         event.setCanceled(true);
-        LOGGER.info("[Species Fix] Saw/FakePlayer killed Quake (AttackEntityEvent)");
+        LOGGER.info("[Species Fix] Saw/FakePlayer killed entity {} (AttackEntityEvent)",
+                BuiltInRegistries.ENTITY_TYPE.getKey(living.getType()));
     }
 
     private static boolean isFakePlayer(Player player) {
@@ -46,9 +45,9 @@ public class SawQuakeKillHandler {
         return name.contains("FakePlayer") || name.contains("MGUFakePlayer") || name.contains("mob_grinding_utils");
     }
 
-    private static boolean isQuake(Entity entity) {
+    private static boolean isSawKillTarget(Entity entity) {
         if (entity == null) return false;
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
-        return QUAKE_ID.equals(id) || entity.getClass().getName().contains("Quake");
+        var id = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
+        return id != null && Config.sawKillEntityIds.contains(id);
     }
 }

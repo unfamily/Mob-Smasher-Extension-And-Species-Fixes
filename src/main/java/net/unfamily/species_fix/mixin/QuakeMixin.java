@@ -1,6 +1,7 @@
 package net.unfamily.species_fix.mixin;
 
 import com.ninni.species.server.entity.mob.update_3.Quake;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.damagesource.DamageSource;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,8 +32,11 @@ public class QuakeMixin {
     private void species_fix$bypassImmunityOrDieIfLethal(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
         Quake quake = (Quake) (Object) this;
 
-        // Saw (Mob Grinding Utils): kill instantly, no shield/absorb (when config enabled)
-        if (net.unfamily.species_fix.Config.quakeSawKillEnabled && isMobSmasherDamage(damageSource)) {
+        // Saw (Mob Grinding Utils): kill instantly, no shield/absorb when this Quake id is configured
+        var id = BuiltInRegistries.ENTITY_TYPE.getKey(quake.getType());
+        if (id != null
+                && net.unfamily.species_fix.Config.sawKillEntityIds.contains(id)
+                && isMobSmasherDamage(damageSource)) {
             quake.setHealth(0);
             quake.die(damageSource);
             LOGGER.info("[Species Fix] Saw damage killed Quake (QuakeMixin.hurt)");
