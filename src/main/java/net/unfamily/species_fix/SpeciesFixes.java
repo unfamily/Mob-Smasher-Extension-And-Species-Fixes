@@ -5,6 +5,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -17,14 +18,19 @@ public class SpeciesFixes
     public static final String MODID = "mobsmash_ext_species_fix";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public SpeciesFixes(FMLJavaModLoadingContext context)
+    public SpeciesFixes()
     {
         // Mixin config is loaded from mods.toml [[mixins]] so it registers early and applies to Species classes
-        IEventBus modEventBus = context.getModEventBus();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
+
+        net.unfamily.species_fix.registry.ModBlocks.BLOCKS.register(modEventBus);
+        net.unfamily.species_fix.registry.ModItems.ITEMS.register(modEventBus);
+
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new SawQuakeKillHandler());
-        context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        MinecraftForge.EVENT_BUS.register(new SoulInhibitorSpawnHandler());
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
