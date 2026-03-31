@@ -2,11 +2,8 @@ package net.unfamily.species_fix.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.server.level.ServerLevel;
-import net.unfamily.species_fix.SoulInhibitorChunkIndex;
 import net.unfamily.species_fix.registry.ModBlockEntities;
 
 public class SoulInhibitorBlockEntity extends BlockEntity {
@@ -41,13 +38,10 @@ public class SoulInhibitorBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void setLevel(Level level) {
-        super.setLevel(level);
-        if (!level.isClientSide() && level instanceof ServerLevel sl && level.getServer() != null) {
-            level.getServer().execute(() -> {
-                if (isRemoved()) return;
-                SoulInhibitorBlock.applyModeAndRedstone(sl, worldPosition);
-            });
-        }
+    public void onLoad() {
+        super.onLoad();
+        if (level == null || level.isClientSide()) return;
+        if (!(level instanceof net.minecraft.server.level.ServerLevel sl)) return;
+        net.unfamily.species_fix.SoulInhibitorChunkIndex.refresh(sl, worldPosition);
     }
 }

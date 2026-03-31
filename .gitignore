@@ -24,3 +24,6 @@ libs
 
 # Files from Forge MDK
 forge*changelog.txt
+
+# generated crash reports accidentally copied into resources
+crash-*-client.txt

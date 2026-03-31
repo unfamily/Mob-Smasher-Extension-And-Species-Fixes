@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "conditions": [
+  "forge:conditions": [
     {
       "type": "forge:mod_loaded",
       "modid": "forbidden_arcanus"
